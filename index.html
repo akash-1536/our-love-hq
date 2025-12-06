@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>Akash & Payal</title>
+  <meta name="description" content="Akash and Payal — a tiny archive of sunshine, devotion, chaos, sweetness, and type 2 fun memories." />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#home">Skip to content</a>
   <header class="top-nav">
-    <div class="logo">🌻 Akash ♥ Payal 🙏</div>
-    <nav class="nav-links">
+    <div class="logo">Akash 💕 and Payal 🌻</div>
+    <nav id="site-nav" class="nav-links">
       <a href="#home">Home</a>
       <a href="#timeline">Story</a>
       <a href="#gallery">Photos</a>
       <a href="#letters">Letters</a>
       <a href="#lists">Plans</a>
     </nav>
-    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-controls="site-nav" aria-expanded="false">☰</button>
   </header>
 
   <main>
@@ -24,18 +26,18 @@
     <section id="home" class="hero">
       <div class="hero-text">
         <p class="hero-tagline">Sunflower hearts. Hanuman-level loyalty.</p>
-        <h1>Akash × Payal</h1>
+        <h1>Akash 💌 Payal</h1>
         <p class="hero-subtitle">
-Warm like sunshine
-Stubbornly devoted like we took an oath
-this is our tiny archive of chaos
-sweetness
-and type 2 fun miracles.
+          Warm like sunshine<br />
+          Stubbornly devoted like we took an oath<br />
+          this is our tiny archive of chaos<br />
+          sweetness<br />
+          and type 2 fun miracles.
         </p>
       </div>
       <div class="hero-photo">
         <!-- Replace with one of your photos -->
-        <img src="images/us-hero.jpg" alt="Akash and Payal together" />
+        <img src="images/us-hero.jpeg" alt="Akash and Payal together" fetchpriority="high" decoding="async" />
       </div>
     </section>
 
@@ -122,23 +124,28 @@ All days we look like us.
       <div class="gallery-grid">
         <!-- Replace the src paths with your actual photos -->
         <figure class="gallery-item">
-          <img src="images/date-1.jpg" alt="Date night" />
-          <figcaption>The classic date night flex</figcaption>
+          <img src="images/dateNight.jpeg" alt="Date night" loading="lazy" decoding="async" />
+          <figcaption>The classic date night</figcaption>
         </figure>
 
         <figure class="gallery-item">
-          <img src="images/trip-1.jpg" alt="Trip" />
-          <figcaption>Type 2 fun on the loose</figcaption>
+          <img src="images/trip-1.jpeg" alt="Trip" loading="lazy" decoding="async" />
+          <figcaption>Kodaikanal Trip</figcaption>
         </figure>
 
         <figure class="gallery-item">
-          <img src="images/everyday-1.jpg" alt="Everyday moment" />
-          <figcaption>Domestic main characters</figcaption>
+          <img src="images/mainCharacter.jpeg" alt="Everyday moment" loading="lazy" decoding="async" />
+          <figcaption>Main characters</figcaption>
         </figure>
 
         <figure class="gallery-item">
-          <img src="images/goofy-1.jpg" alt="Goofy moment" />
-          <figcaption>Zero dignity. Full joy.</figcaption>
+          <img src="images/specialDay1.jpeg" alt="Goofy moment" loading="lazy" decoding="async" />
+          <figcaption>Special Day</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img src="images/specialDay2.jpeg" alt="Goofy moment" loading="lazy" decoding="async" />
+          <figcaption>30-08-2025</figcaption>
         </figure>
       </div>
     </section>
@@ -249,31 +256,40 @@ High risk. High reward. Unlimited snacks.
   </footer>
 
   <script>
-    // Mobile nav toggle
+    // Mobile nav toggle (with ARIA)
     const navToggle = document.querySelector(".nav-toggle");
-    const navLinks = document.querySelector(".nav-links");
-    navToggle.addEventListener("click", () => {
-      navLinks.classList.toggle("nav-open");
-    });
+    const navLinks = document.getElementById("site-nav");
+    if (navToggle && navLinks) {
+      navToggle.addEventListener("click", () => {
+        const isOpen = navLinks.classList.toggle("nav-open");
+        navToggle.setAttribute("aria-expanded", String(isOpen));
+      });
+    }
 
-    // Smooth scroll for internal links
+    // Smooth scroll for internal links (respect reduced motion)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener("click", function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute("href").substring(1);
+        const href = this.getAttribute("href");
+        if (!href || href === "#") return;
+        const targetId = href.substring(1);
         const target = document.getElementById(targetId);
         if (target) {
-          target.scrollIntoView({ behavior: "smooth" });
-          navLinks.classList.remove("nav-open");
+          e.preventDefault();
+          const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          target.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth" });
+          navLinks?.classList.remove("nav-open");
+          if (navToggle) navToggle.setAttribute("aria-expanded", "false");
         }
       });
     });
 
-    // Show last updated date
+    // Show last updated date using document.lastModified
     const lastUpdatedSpan = document.getElementById("last-updated");
     if (lastUpdatedSpan) {
-      const now = new Date();
-      lastUpdatedSpan.textContent = now.toLocaleDateString();
+      const modified = new Date(document.lastModified);
+      lastUpdatedSpan.textContent = isNaN(modified.getTime())
+        ? new Date().toLocaleDateString()
+        : modified.toLocaleDateString();
     }
   </script>
 </body>
