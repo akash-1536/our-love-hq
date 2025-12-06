@@ -1,5 +1,3 @@
-/* Pastel Sunflower Theme */
-
 :root {
   --sunflower: #f6d27b;
   --sunflower-deep: #e0b45a;
@@ -30,6 +28,7 @@ body {
   background: radial-gradient(circle at top, #fffdf5 0, #fff6e4 40%, #fbead0 100%);
   color: var(--ink);
   line-height: 1.6;
+  font-size: 16px;
 }
 
 body.modal-open {
@@ -58,9 +57,9 @@ body.modal-open {
 /* Layout */
 
 main {
-  max-width: 1100px;
+  max-width: min(1100px, 100vw - 2rem);
   margin: 0 auto;
-  padding: 90px 16px 40px;
+  padding: 90px 1rem 40px;
 }
 
 /* Top navigation */
@@ -74,29 +73,29 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 1rem;
   background: rgba(255, 249, 236, 0.94);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(224, 180, 90, 0.4);
   box-shadow: 0 8px 18px rgba(204, 163, 92, 0.18);
-  z-index: 10;
+  z-index: 1000;
 }
 
 .logo {
   font-weight: 700;
   letter-spacing: 0.08em;
-  font-size: 0.95rem;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
   text-transform: uppercase;
   color: var(--soft-brown);
 }
 
 .nav-links {
   display: flex;
-  gap: 16px;
+  gap: 0.9rem;
 }
 
 .nav-links a {
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 1.4vw, 0.95rem);
   text-decoration: none;
   color: var(--soft-brown);
   padding: 4px 10px;
@@ -131,43 +130,35 @@ main {
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
-  gap: 24px;
+  gap: clamp(1rem, 3vw, 1.8rem);
   align-items: center;
   padding: 24px 0 40px;
 }
 
-/* Heading */
-
 .hero-text h1 {
   font-family: "Playfair Display", serif;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 3.5vw, 2.7rem);
   margin-bottom: 10px;
   color: var(--ink);
   font-weight: 700;
 }
 
-/* Tagline */
-
 .hero-tagline {
-  font-size: 0.85rem;
+  font-size: clamp(0.7rem, 1.3vw, 0.9rem);
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: var(--soft-brown);
   margin-bottom: 6px;
 }
 
-/* Subtitle */
-
 .hero-subtitle {
   font-family: "Playfair Display", serif;
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
   color: var(--soft-brown);
-  max-width: 520px;
+  max-width: 32rem;
   line-height: 1.7;
   font-weight: 400;
 }
-
-/* Hero photo (GSAP controls clip-path/transform) */
 
 .hero-photo img {
   width: 100%;
@@ -187,14 +178,14 @@ main {
 }
 
 .section h2 {
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
   margin-bottom: 6px;
   color: var(--ink);
   font-family: "Playfair Display", serif;
 }
 
 .section-intro {
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.4vw, 0.95rem);
   color: var(--soft-brown);
   margin-bottom: 18px;
 }
@@ -414,6 +405,10 @@ main {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 360px;      /* ~6 emails tall */
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-right: -4px;
 }
 
 .emails-empty {
@@ -484,31 +479,35 @@ main {
 .email-modal {
   position: fixed;
   inset: 0;
+  z-index: 5000;
   display: none;
-  z-index: 50;
+  pointer-events: none;
 }
 
 .email-modal.open {
   display: block;
+  pointer-events: auto;
 }
 
 .email-modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(34, 25, 16, 0.45);
-  backdrop-filter: blur(5px);
+  background: rgba(32, 24, 14, 0.52);
+  backdrop-filter: blur(6px);
 }
 
 .email-modal-dialog {
-  position: relative;
-  max-width: 520px;
-  margin: 48px auto;
-  padding: 14px 16px 16px;
-  border-radius: 18px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(540px, 92vw);
+  max-height: 85vh;
   background: linear-gradient(135deg, #fff9ee, #ffeef7);
-  box-shadow: 0 22px 40px rgba(63, 42, 24, 0.35);
-  border: 1px solid rgba(246, 210, 123, 0.8);
-  max-height: calc(100vh - 96px);
+  border-radius: 22px;
+  padding: 16px 18px 18px;
+  border: 1px solid rgba(246, 210, 123, 0.9);
+  box-shadow: 0 22px 48px rgba(63, 42, 24, 0.4);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -516,11 +515,11 @@ main {
 
 .email-modal-close {
   position: absolute;
-  top: 8px;
-  right: 10px;
+  top: 10px;
+  right: 12px;
   border: none;
   background: transparent;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   cursor: pointer;
   color: var(--soft-brown);
 }
@@ -529,7 +528,7 @@ main {
   font-size: 0.8rem;
   color: rgba(107, 82, 64, 0.9);
   margin-bottom: 4px;
-  padding-right: 24px;
+  padding-right: 1.6rem;
 }
 
 .email-modal-subject {
@@ -537,7 +536,7 @@ main {
   font-family: "Playfair Display", serif;
   margin-bottom: 4px;
   color: var(--ink);
-  padding-right: 24px;
+  padding-right: 1.6rem;
 }
 
 .email-modal-date {
@@ -549,13 +548,10 @@ main {
 .email-modal-body {
   font-size: 0.88rem;
   color: var(--soft-brown);
-  line-height: 1.6;
-  padding-right: 4px;
+  line-height: 1.55;
   overflow-y: auto;
-}
-
-.email-modal-body br {
-  line-height: 1.4;
+  flex: 1;
+  padding-right: 3px;
 }
 
 /* Footer */
@@ -577,11 +573,11 @@ main {
   will-change: opacity, transform;
 }
 
-/* Mobile */
+/* Responsive */
 
 @media (max-width: 768px) {
   main {
-    padding: 78px 12px 24px;
+    padding: 78px 1rem 24px;
   }
 
   .hero {
@@ -589,7 +585,7 @@ main {
   }
 
   .hero-text h1 {
-    font-size: 2.1rem;
+    font-size: clamp(1.9rem, 7vw, 2.3rem);
   }
 
   .nav-links {
@@ -625,7 +621,7 @@ main {
   }
 
   .email-modal-dialog {
-    margin: 32px 12px;
-    max-height: calc(100vh - 64px);
+    max-height: 80vh;
+    width: 92vw;
   }
 }

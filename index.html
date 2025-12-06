@@ -6,7 +6,7 @@
   <meta name="description" content="Akash and Payal — a tiny archive of sunshine, devotion, chaos, sweetness, and type 2 fun memories." />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Beautiful romantic font -->
+  <!-- Romantic serif font -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap"
     rel="stylesheet"
@@ -38,7 +38,7 @@
   </header>
 
   <main>
-    <!-- HOME / HERO -->
+    <!-- HERO -->
     <section id="home" class="hero">
       <div class="hero-text">
         <p class="hero-tagline">Sunflower hearts. Hanuman-level loyalty.</p>
@@ -140,29 +140,35 @@
       </p>
 
       <div class="gallery-grid">
+
+        <figure class="gallery-item fade-on-scroll">
+          <img src="images/firstPic.jpeg" alt="Date night" loading="lazy" decoding="async" />
+          <figcaption>Our first picture 💖</figcaption>
+        </figure>
+
         <figure class="gallery-item fade-on-scroll">
           <img src="images/dateNight.jpeg" alt="Date night" loading="lazy" decoding="async" />
-          <figcaption>The classic date night</figcaption>
+          <figcaption>Classic date night ✨</figcaption>
         </figure>
 
         <figure class="gallery-item fade-on-scroll">
           <img src="images/trip-1.jpeg" alt="Trip" loading="lazy" decoding="async" />
-          <figcaption>Kodaikanal Trip</figcaption>
+          <figcaption>Kodaikanal Trip 🎀</figcaption>
         </figure>
 
         <figure class="gallery-item fade-on-scroll">
           <img src="images/mainCharacter.jpeg" alt="Everyday moment" loading="lazy" decoding="async" />
-          <figcaption>Main characters</figcaption>
+          <figcaption>Main characters 🙈</figcaption>
         </figure>
 
         <figure class="gallery-item fade-on-scroll">
           <img src="images/specialDay1.jpeg" alt="Goofy moment" loading="lazy" decoding="async" />
-          <figcaption>Special Day</figcaption>
+          <figcaption>Special Day 🫀</figcaption>
         </figure>
 
         <figure class="gallery-item fade-on-scroll">
           <img src="images/specialDay2.jpeg" alt="Goofy moment" loading="lazy" decoding="async" />
-          <figcaption>30-08-2025</figcaption>
+          <figcaption>30-08-2025 🧿</figcaption>
         </figure>
       </div>
     </section>
@@ -197,9 +203,7 @@
         />
       </div>
 
-      <div id="emails-summary" class="emails-summary">
-        <!-- Filled by JS -->
-      </div>
+      <div id="emails-summary" class="emails-summary"></div>
 
       <ul id="emails-list" class="emails-list">
         <li class="emails-empty">
@@ -297,19 +301,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // ===== NAV TOGGLE =====
+    document.addEventListener("DOMContentLoaded", function () {
       const navToggle = document.querySelector(".nav-toggle");
       const navLinks = document.getElementById("site-nav");
+
       if (navToggle && navLinks) {
-        navToggle.addEventListener("click", () => {
+        navToggle.addEventListener("click", function () {
           const isOpen = navLinks.classList.toggle("nav-open");
           navToggle.setAttribute("aria-expanded", String(isOpen));
         });
       }
 
-      // ===== SMOOTH SCROLL =====
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
         anchor.addEventListener("click", function (e) {
           const href = this.getAttribute("href");
           if (!href || href === "#") return;
@@ -325,7 +328,6 @@
         });
       });
 
-      // ===== LAST UPDATED =====
       const lastUpdatedSpan = document.getElementById("last-updated");
       if (lastUpdatedSpan) {
         const modified = new Date(document.lastModified);
@@ -334,16 +336,14 @@
           : modified.toLocaleDateString();
       }
 
-      // ===== EMAIL VIEWER =====
       const emailsListEl = document.getElementById("emails-list");
       const searchInput = document.getElementById("emails-search");
       const filterButtons = document.querySelectorAll(".emails-filters .pill-button");
       const summaryEl = document.getElementById("emails-summary");
 
       const modal = document.getElementById("email-modal");
-      const modalBackdrop = modal?.querySelector(".email-modal-backdrop");
-      const modalDialog = modal?.querySelector(".email-modal-dialog");
-      const modalClose = modal?.querySelector(".email-modal-close");
+      const modalBackdrop = modal ? modal.querySelector(".email-modal-backdrop") : null;
+      const modalClose = modal ? modal.querySelector(".email-modal-close") : null;
       const modalMetaEl = document.getElementById("email-modal-meta");
       const modalSubjectEl = document.getElementById("email-modal-subject");
       const modalDateEl = document.getElementById("email-modal-date");
@@ -393,7 +393,7 @@
             month: "short",
             day: "numeric"
           });
-        } catch {
+        } catch (e) {
           return "";
         }
       }
@@ -410,7 +410,7 @@
             hour: "2-digit",
             minute: "2-digit"
           });
-        } catch {
+        } catch (e) {
           return "";
         }
       }
@@ -422,22 +422,22 @@
           return;
         }
         if (shown === total) {
-          summaryEl.textContent = `${shown} emails in this universe.`;
+          summaryEl.textContent = shown + " emails in this universe.";
         } else {
-          summaryEl.textContent = `${shown} shown out of ${total} emails.`;
+          summaryEl.textContent = shown + " shown out of " + total + " emails.";
         }
       }
 
       function openEmailModal(email, rowEl) {
-        if (!modal || !modalDialog || !modalSubjectEl || !modalBodyEl || !modalMetaEl || !modalDateEl) return;
+        if (!modal || !modalSubjectEl || !modalBodyEl || !modalMetaEl || !modalDateEl) return;
 
         lastFocusedRow = rowEl || null;
 
-        const fromName = email.from || email.from_email || "Unknown";
-        const toName = email.to || email.to_email || "";
-        const fullDate = formatFullDate(email.date);
+        var fromName = email.from || email.from_email || "Unknown";
+        var toName = email.to || email.to_email || "";
+        var fullDate = formatFullDate(email.date);
 
-        modalMetaEl.textContent = `${fromName} → ${toName}`;
+        modalMetaEl.textContent = fromName + " \u2192 " + toName;
         modalSubjectEl.textContent = email.subject || "(no subject)";
         modalDateEl.textContent = fullDate || "";
         modalBodyEl.innerHTML = (email.body || "").replace(/\n/g, "<br />");
@@ -445,7 +445,6 @@
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
-
         if (modalClose) {
           modalClose.focus();
         }
@@ -463,13 +462,17 @@
       }
 
       if (modalBackdrop) {
-        modalBackdrop.addEventListener("click", closeEmailModal);
+        modalBackdrop.addEventListener("click", function () {
+          closeEmailModal();
+        });
       }
       if (modalClose) {
-        modalClose.addEventListener("click", closeEmailModal);
+        modalClose.addEventListener("click", function () {
+          closeEmailModal();
+        });
       }
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal?.classList.contains("open")) {
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && modal && modal.classList.contains("open")) {
           closeEmailModal();
         }
       });
@@ -484,12 +487,12 @@
           return;
         }
 
-        const filtered = emailsData
+        var filtered = emailsData
           .filter(passesFilter)
           .filter(passesSearch)
-          .sort((a, b) => {
-            const da = new Date(a.date || 0).getTime();
-            const db = new Date(b.date || 0).getTime();
+          .sort(function (a, b) {
+            var da = new Date(a.date || 0).getTime();
+            var db = new Date(b.date || 0).getTime();
             return db - da;
           });
 
@@ -503,31 +506,31 @@
         emailsListEl.innerHTML = "";
         updateSummary(emailsData.length, filtered.length);
 
-        filtered.forEach((email) => {
-          const li = document.createElement("li");
-          li.className = "email-row fade-on-scroll";
+        filtered.forEach(function (email) {
+          var li = document.createElement("li");
+          li.className = "email-row";
           li.setAttribute("tabindex", "0");
           li.setAttribute("role", "button");
 
-          const top = document.createElement("div");
+          var top = document.createElement("div");
           top.className = "email-row-main";
 
-          const subjectSpan = document.createElement("span");
+          var subjectSpan = document.createElement("span");
           subjectSpan.className = "email-row-subject";
           subjectSpan.textContent = email.subject || "(no subject)";
 
-          const dateSpan = document.createElement("span");
+          var dateSpan = document.createElement("span");
           dateSpan.className = "email-row-date";
           dateSpan.textContent = formatDate(email.date) || "";
 
           top.appendChild(subjectSpan);
           top.appendChild(dateSpan);
 
-          const secondary = document.createElement("div");
+          var secondary = document.createElement("div");
           secondary.className = "email-row-secondary";
-          const fromName = email.from || email.from_email || "Unknown";
-          const toName = email.to || email.to_email || "";
-          secondary.textContent = `${fromName} → ${toName}`;
+          var fromName = email.from || email.from_email || "Unknown";
+          var toName = email.to || email.to_email || "";
+          secondary.textContent = fromName + " \u2192 " + toName;
 
           li.appendChild(top);
           li.appendChild(secondary);
@@ -536,8 +539,10 @@
             openEmailModal(email, li);
           }
 
-          li.addEventListener("click", handleOpen);
-          li.addEventListener("keydown", (e) => {
+          li.addEventListener("click", function () {
+            handleOpen();
+          });
+          li.addEventListener("keydown", function (e) {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               handleOpen();
@@ -546,21 +551,16 @@
 
           emailsListEl.appendChild(li);
         });
-
-        if (window.ScrollTrigger) {
-          ScrollTrigger.refresh();
-        }
       }
 
-      // Load emails.json
       fetch("emails.json")
-        .then(res => {
+        .then(function (res) {
           if (!res.ok) {
             throw new Error("HTTP " + res.status);
           }
           return res.json();
         })
-        .then(data => {
+        .then(function (data) {
           if (Array.isArray(data)) {
             emailsData = data;
           } else {
@@ -568,7 +568,7 @@
           }
           renderEmails();
         })
-        .catch((err) => {
+        .catch(function (err) {
           console.error("Error loading emails.json:", err);
           if (emailsListEl) {
             emailsListEl.innerHTML =
@@ -577,31 +577,29 @@
           updateSummary(0, 0);
         });
 
-      // Filter buttons
-      filterButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          filterButtons.forEach(b => b.classList.remove("pill-active"));
+      filterButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          filterButtons.forEach(function (b) {
+            b.classList.remove("pill-active");
+          });
           btn.classList.add("pill-active");
           currentFilter = btn.dataset.filter || "all";
           renderEmails();
         });
       });
 
-      // Search input
       if (searchInput) {
-        searchInput.addEventListener("input", () => {
+        searchInput.addEventListener("input", function () {
           currentQuery = searchInput.value.trim().toLowerCase();
           renderEmails();
         });
       }
 
-      // ===== ANIMATIONS =====
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (!prefersReducedMotion && window.gsap) {
         gsap.registerPlugin(ScrollTrigger);
 
-        // Hero text
         gsap.from(".hero-text", {
           opacity: 0,
           y: 40,
@@ -609,7 +607,6 @@
           ease: "power3.out"
         });
 
-        // Hero image reveal
         gsap.set(".hero-photo img", {
           clipPath: "inset(0 0 100% 0)",
           scale: 1.05
@@ -623,14 +620,13 @@
           delay: 0.2
         });
 
-        // Parallax hero image
-        const heroSection = document.querySelector(".hero");
-        const heroImage = document.querySelector(".hero-photo img");
+        var heroSection = document.querySelector(".hero");
+        var heroImage = document.querySelector(".hero-photo img");
         if (heroSection && heroImage) {
-          heroSection.addEventListener("pointermove", (e) => {
-            const rect = heroSection.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
+          heroSection.addEventListener("pointermove", function (e) {
+            var rect = heroSection.getBoundingClientRect();
+            var x = (e.clientX - rect.left) / rect.width - 0.5;
+            var y = (e.clientY - rect.top) / rect.height - 0.5;
 
             gsap.to(heroImage, {
               x: x * 10,
@@ -640,7 +636,7 @@
             });
           });
 
-          heroSection.addEventListener("pointerleave", () => {
+          heroSection.addEventListener("pointerleave", function () {
             gsap.to(heroImage, {
               x: 0,
               y: 0,
@@ -650,8 +646,7 @@
           });
         }
 
-        // Fade-on-scroll
-        gsap.utils.toArray(".fade-on-scroll").forEach((el) => {
+        gsap.utils.toArray(".fade-on-scroll").forEach(function (el) {
           gsap.to(el, {
             opacity: 1,
             y: 0,
@@ -664,7 +659,6 @@
           });
         });
 
-        // Shrinking header
         gsap.to(".top-nav", {
           scrollTrigger: {
             trigger: document.body,
