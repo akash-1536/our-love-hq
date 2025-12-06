@@ -140,12 +140,6 @@
       </p>
 
       <div class="gallery-grid">
-
-        <figure class="gallery-item fade-on-scroll">
-          <img src="images/firstPic.jpeg" alt="Date night" loading="lazy" decoding="async" />
-          <figcaption>The classic date night</figcaption>
-        </figure>
-
         <figure class="gallery-item fade-on-scroll">
           <img src="images/dateNight.jpeg" alt="Date night" loading="lazy" decoding="async" />
           <figcaption>The classic date night</figcaption>
@@ -207,12 +201,35 @@
         <!-- Filled by JS -->
       </div>
 
-      <div id="emails-list" class="emails-list">
-        <p class="emails-empty">
+      <ul id="emails-list" class="emails-list">
+        <li class="emails-empty">
           Add an <code>emails.json</code> file to this folder and all your mails will appear here.
-        </p>
-      </div>
+        </li>
+      </ul>
     </section>
+
+    <!-- POPUP EMAIL MODAL -->
+    <div id="email-modal" class="email-modal" aria-hidden="true">
+      <div class="email-modal-backdrop"></div>
+      <div
+        class="email-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="email-modal-subject"
+      >
+        <button
+          type="button"
+          class="email-modal-close"
+          aria-label="Close email"
+        >
+          ✕
+        </button>
+        <p id="email-modal-meta" class="email-modal-meta"></p>
+        <h3 id="email-modal-subject" class="email-modal-subject"></h3>
+        <p id="email-modal-date" class="email-modal-date"></p>
+        <div id="email-modal-body" class="email-modal-body"></div>
+      </div>
+    </div>
 
     <!-- LISTS / PLANS -->
     <section id="lists" class="section fade-on-scroll">
@@ -323,9 +340,19 @@
       const filterButtons = document.querySelectorAll(".emails-filters .pill-button");
       const summaryEl = document.getElementById("emails-summary");
 
+      const modal = document.getElementById("email-modal");
+      const modalBackdrop = modal?.querySelector(".email-modal-backdrop");
+      const modalDialog = modal?.querySelector(".email-modal-dialog");
+      const modalClose = modal?.querySelector(".email-modal-close");
+      const modalMetaEl = document.getElementById("email-modal-meta");
+      const modalSubjectEl = document.getElementById("email-modal-subject");
+      const modalDateEl = document.getElementById("email-modal-date");
+      const modalBodyEl = document.getElementById("email-modal-body");
+
       let emailsData = [];
       let currentFilter = "all";
       let currentQuery = "";
+      let lastFocusedRow = null;
 
       function normalise(str) {
         return (str || "").toLowerCase();
@@ -371,6 +398,23 @@
         }
       }
 
+      function formatFullDate(isoString) {
+        if (!isoString) return "";
+        try {
+          const d = new Date(isoString);
+          if (isNaN(d.getTime())) return "";
+          return d.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        } catch {
+          return "";
+        }
+      }
+
       function updateSummary(total, shown) {
         if (!summaryEl) return;
         if (!total) {
@@ -384,12 +428,58 @@
         }
       }
 
+      function openEmailModal(email, rowEl) {
+        if (!modal || !modalDialog || !modalSubjectEl || !modalBodyEl || !modalMetaEl || !modalDateEl) return;
+
+        lastFocusedRow = rowEl || null;
+
+        const fromName = email.from || email.from_email || "Unknown";
+        const toName = email.to || email.to_email || "";
+        const fullDate = formatFullDate(email.date);
+
+        modalMetaEl.textContent = `${fromName} → ${toName}`;
+        modalSubjectEl.textContent = email.subject || "(no subject)";
+        modalDateEl.textContent = fullDate || "";
+        modalBodyEl.innerHTML = (email.body || "").replace(/\n/g, "<br />");
+
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+
+        if (modalClose) {
+          modalClose.focus();
+        }
+      }
+
+      function closeEmailModal() {
+        if (!modal) return;
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        if (lastFocusedRow) {
+          lastFocusedRow.focus();
+          lastFocusedRow = null;
+        }
+      }
+
+      if (modalBackdrop) {
+        modalBackdrop.addEventListener("click", closeEmailModal);
+      }
+      if (modalClose) {
+        modalClose.addEventListener("click", closeEmailModal);
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal?.classList.contains("open")) {
+          closeEmailModal();
+        }
+      });
+
       function renderEmails() {
         if (!emailsListEl) return;
 
         if (!emailsData.length) {
           emailsListEl.innerHTML =
-            '<p class="emails-empty">Add an <code>emails.json</code> file to this folder and all your mails will appear here.</p>';
+            '<li class="emails-empty">Add an <code>emails.json</code> file to this folder and all your mails will appear here.</li>';
           updateSummary(0, 0);
           return;
         }
@@ -405,7 +495,7 @@
 
         if (!filtered.length) {
           emailsListEl.innerHTML =
-            '<p class="emails-empty">No emails match this mood yet. Try changing the filter or search.</p>';
+            '<li class="emails-empty">No emails match this mood yet. Try changing the filter or search.</li>';
           updateSummary(emailsData.length, 0);
           return;
         }
@@ -413,60 +503,48 @@
         emailsListEl.innerHTML = "";
         updateSummary(emailsData.length, filtered.length);
 
-        filtered.forEach((email, index) => {
-          const card = document.createElement("article");
-          card.className = "email-card";
-          card.setAttribute("tabindex", "0");
-          card.setAttribute("role", "button");
-          card.setAttribute("aria-expanded", "false");
+        filtered.forEach((email) => {
+          const li = document.createElement("li");
+          li.className = "email-row fade-on-scroll";
+          li.setAttribute("tabindex", "0");
+          li.setAttribute("role", "button");
 
-          const header = document.createElement("header");
-          header.className = "email-meta";
+          const top = document.createElement("div");
+          top.className = "email-row-main";
 
-          const title = document.createElement("h3");
-          title.textContent = email.subject || "(no subject)";
+          const subjectSpan = document.createElement("span");
+          subjectSpan.className = "email-row-subject";
+          subjectSpan.textContent = email.subject || "(no subject)";
 
-          const metaLine = document.createElement("p");
-          metaLine.className = "email-meta-line";
+          const dateSpan = document.createElement("span");
+          dateSpan.className = "email-row-date";
+          dateSpan.textContent = formatDate(email.date) || "";
+
+          top.appendChild(subjectSpan);
+          top.appendChild(dateSpan);
+
+          const secondary = document.createElement("div");
+          secondary.className = "email-row-secondary";
           const fromName = email.from || email.from_email || "Unknown";
           const toName = email.to || email.to_email || "";
-          const dateText = formatDate(email.date);
-          metaLine.textContent = `${fromName} → ${toName}${dateText ? " · " + dateText : ""}`;
+          secondary.textContent = `${fromName} → ${toName}`;
 
-          header.appendChild(title);
-          header.appendChild(metaLine);
+          li.appendChild(top);
+          li.appendChild(secondary);
 
-          const bodyWrapper = document.createElement("div");
-          bodyWrapper.className = "email-body";
-
-          const bodyInner = document.createElement("div");
-          bodyInner.className = "email-body-inner";
-          bodyInner.innerHTML = (email.body || "").replace(/\n/g, "<br />");
-
-          bodyWrapper.appendChild(bodyInner);
-
-          const hint = document.createElement("div");
-          hint.className = "email-toggle-hint";
-          hint.textContent = "Tap to expand / collapse";
-
-          card.appendChild(header);
-          card.appendChild(bodyWrapper);
-          card.appendChild(hint);
-
-          function toggleExpanded() {
-            const isExpanded = card.classList.toggle("expanded");
-            card.setAttribute("aria-expanded", String(isExpanded));
+          function handleOpen() {
+            openEmailModal(email, li);
           }
 
-          card.addEventListener("click", toggleExpanded);
-          card.addEventListener("keydown", (e) => {
+          li.addEventListener("click", handleOpen);
+          li.addEventListener("keydown", (e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              toggleExpanded();
+              handleOpen();
             }
           });
 
-          emailsListEl.appendChild(card);
+          emailsListEl.appendChild(li);
         });
 
         if (window.ScrollTrigger) {
@@ -476,29 +554,28 @@
 
       // Load emails.json
       fetch("emails.json")
-      .then(res => {
-        if (!res.ok) {
-          throw new Error("HTTP " + res.status);
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (Array.isArray(data)) {
-          emailsData = data;
-        } else {
-          emailsData = [];
-        }
-        renderEmails();
-      })
-      .catch((err) => {
-        console.error("Error loading emails.json:", err);
-        if (emailsListEl) {
-          emailsListEl.innerHTML =
-            '<p class="emails-empty">Could not load <code>emails.json</code> (check path & JSON). See console for details.</p>';
-        }
-        updateSummary(0, 0);
-      });
-
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (Array.isArray(data)) {
+            emailsData = data;
+          } else {
+            emailsData = [];
+          }
+          renderEmails();
+        })
+        .catch((err) => {
+          console.error("Error loading emails.json:", err);
+          if (emailsListEl) {
+            emailsListEl.innerHTML =
+              '<li class="emails-empty">Could not load <code>emails.json</code> (check path & JSON). See console for details.</li>';
+          }
+          updateSummary(0, 0);
+        });
 
       // Filter buttons
       filterButtons.forEach(btn => {

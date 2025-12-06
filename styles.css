@@ -32,6 +32,10 @@ body {
   line-height: 1.6;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 /* Skip link */
 
 .skip-link {
@@ -406,9 +410,10 @@ main {
 }
 
 .emails-list {
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .emails-empty {
@@ -416,88 +421,141 @@ main {
   color: var(--soft-brown);
 }
 
-/* Email cards */
+/* Email rows */
 
-.email-card {
-  background: linear-gradient(135deg, #fff9ee, #fdf2ff);
-  border-radius: 16px;
-  border: 1px solid rgba(246, 210, 123, 0.6);
-  padding: 10px 12px;
-  box-shadow: 0 12px 24px rgba(193, 140, 96, 0.16);
+.email-row {
+  background: rgba(255, 249, 236, 0.96);
+  border-radius: 14px;
+  border: 1px solid rgba(246, 210, 123, 0.65);
+  padding: 8px 10px;
+  box-shadow: 0 8px 18px rgba(193, 140, 96, 0.13);
   cursor: pointer;
   transition:
-    box-shadow 0.25s ease,
-    transform 0.25s ease,
-    background 0.25s ease,
-    max-height 0.25s ease;
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   outline: none;
 }
 
-.email-card:focus-visible {
-  box-shadow: 0 0 0 2px rgba(246, 210, 123, 0.9);
+.email-row:hover {
+  background: #fff9ee;
+  box-shadow: 0 12px 24px rgba(193, 140, 96, 0.18);
+  transform: translateY(-2px);
 }
 
-.email-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 30px rgba(193, 140, 96, 0.2);
+.email-row:focus-visible {
+  box-shadow: 0 0 0 2px rgba(246, 210, 123, 0.8);
 }
 
-.email-card.expanded {
-  background: linear-gradient(135deg, #fff9ec, #ffeef5);
-}
-
-.email-meta {
+.email-row-main {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 6px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
 }
 
-.email-meta h3 {
-  font-size: 0.98rem;
+.email-row-subject {
+  font-size: 0.92rem;
+  font-weight: 500;
   color: var(--ink);
   font-family: "Playfair Display", serif;
-}
-
-.email-meta-line {
-  font-size: 0.78rem;
-  color: var(--soft-brown);
-}
-
-.email-body {
-  position: relative;
-  font-size: 0.86rem;
-  color: var(--soft-brown);
-  max-height: 4.8rem;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.email-body-inner {
-  white-space: pre-wrap;
+.email-row-date {
+  font-size: 0.78rem;
+  color: rgba(107, 82, 64, 0.9);
+  flex-shrink: 0;
 }
 
-.email-card.expanded .email-body {
-  max-height: none;
+.email-row-secondary {
+  font-size: 0.78rem;
+  color: rgba(107, 82, 64, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.email-card:not(.expanded) .email-body::after {
-  content: "";
+/* EMAIL MODAL */
+
+.email-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 50;
+}
+
+.email-modal.open {
+  display: block;
+}
+
+.email-modal-backdrop {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 28px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 249, 236, 0),
-    rgba(255, 249, 236, 0.96)
-  );
+  inset: 0;
+  background: rgba(34, 25, 16, 0.45);
+  backdrop-filter: blur(5px);
 }
 
-.email-toggle-hint {
-  margin-top: 4px;
-  font-size: 0.75rem;
+.email-modal-dialog {
+  position: relative;
+  max-width: 520px;
+  margin: 48px auto;
+  padding: 14px 16px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff9ee, #ffeef7);
+  box-shadow: 0 22px 40px rgba(63, 42, 24, 0.35);
+  border: 1px solid rgba(246, 210, 123, 0.8);
+  max-height: calc(100vh - 96px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.email-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--soft-brown);
+}
+
+.email-modal-meta {
+  font-size: 0.8rem;
+  color: rgba(107, 82, 64, 0.9);
+  margin-bottom: 4px;
+  padding-right: 24px;
+}
+
+.email-modal-subject {
+  font-size: 1.1rem;
+  font-family: "Playfair Display", serif;
+  margin-bottom: 4px;
+  color: var(--ink);
+  padding-right: 24px;
+}
+
+.email-modal-date {
+  font-size: 0.78rem;
   color: rgba(107, 82, 64, 0.85);
+  margin-bottom: 8px;
+}
+
+.email-modal-body {
+  font-size: 0.88rem;
+  color: var(--soft-brown);
+  line-height: 1.6;
+  padding-right: 4px;
+  overflow-y: auto;
+}
+
+.email-modal-body br {
+  line-height: 1.4;
 }
 
 /* Footer */
@@ -564,5 +622,10 @@ main {
 
   .emails-search {
     max-width: 100%;
+  }
+
+  .email-modal-dialog {
+    margin: 32px 12px;
+    max-height: calc(100vh - 64px);
   }
 }
