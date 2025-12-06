@@ -193,14 +193,6 @@
             Payal → Akash
           </button>
         </div>
-
-        <input
-          type="search"
-          id="emails-search"
-          class="emails-search"
-          placeholder="Search by words, moods, days..."
-          autocomplete="off"
-        />
       </div>
 
       <div id="emails-summary" class="emails-summary"></div>
@@ -337,7 +329,6 @@
       }
 
       const emailsListEl = document.getElementById("emails-list");
-      const searchInput = document.getElementById("emails-search");
       const filterButtons = document.querySelectorAll(".emails-filters .pill-button");
       const summaryEl = document.getElementById("emails-summary");
 
@@ -351,7 +342,6 @@
 
       let emailsData = [];
       let currentFilter = "all";
-      let currentQuery = "";
       let lastFocusedRow = null;
 
       function normalise(str) {
@@ -369,18 +359,6 @@
           return from.includes("payal") && to.includes("akash");
         }
         return true;
-      }
-
-      function passesSearch(email) {
-        if (!currentQuery) return true;
-        const haystack = [
-          email.subject,
-          email.body,
-          email.from,
-          email.to,
-          email.date
-        ].map(normalise).join(" ");
-        return haystack.includes(currentQuery);
       }
 
       function formatDate(isoString) {
@@ -489,7 +467,6 @@
 
         var filtered = emailsData
           .filter(passesFilter)
-          .filter(passesSearch)
           .sort(function (a, b) {
             var da = new Date(a.date || 0).getTime();
             var db = new Date(b.date || 0).getTime();
@@ -498,7 +475,7 @@
 
         if (!filtered.length) {
           emailsListEl.innerHTML =
-            '<li class="emails-empty">No emails match this mood yet. Try changing the filter or search.</li>';
+            '<li class="emails-empty">No emails match this mood yet. Try changing the filter.</li>';
           updateSummary(emailsData.length, 0);
           return;
         }
@@ -587,13 +564,6 @@
           renderEmails();
         });
       });
-
-      if (searchInput) {
-        searchInput.addEventListener("input", function () {
-          currentQuery = searchInput.value.trim().toLowerCase();
-          renderEmails();
-        });
-      }
 
       var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
