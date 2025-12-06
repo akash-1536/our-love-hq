@@ -20,6 +20,10 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: radial-gradient(circle at top, #fffdf5 0, #fff6e4 40%, #fbead0 100%);
@@ -27,7 +31,7 @@ body {
   line-height: 1.6;
 }
 
-/* Skip link for accessibility */
+/* Skip link */
 .skip-link {
   position: absolute;
   left: -999px;
@@ -89,13 +93,14 @@ main {
   color: var(--soft-brown);
   padding: 4px 10px;
   border-radius: 999px;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .nav-links a:hover {
   background: rgba(246, 210, 123, 0.2);
   color: var(--ink);
   box-shadow: 0 0 0 1px rgba(246, 210, 123, 0.4);
+  transform: translateY(-1px);
 }
 
 /* Mobile nav button */
@@ -117,7 +122,7 @@ main {
   padding: 24px 0 40px;
 }
 
-/* Heading in romantic font */
+/* Heading */
 .hero-text h1 {
   font-family: "Playfair Display", serif;
   font-size: 2.5rem;
@@ -126,7 +131,7 @@ main {
   font-weight: 700;
 }
 
-/* Tagline stays clean */
+/* Tagline */
 .hero-tagline {
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -135,7 +140,7 @@ main {
   margin-bottom: 6px;
 }
 
-/* Subtitle in pretty font */
+/* Subtitle */
 .hero-subtitle {
   font-family: "Playfair Display", serif;
   font-size: 1.05rem;
@@ -145,7 +150,7 @@ main {
   font-weight: 400;
 }
 
-/* Photo */
+/* Hero photo (GSAP controls clip-path/transform) */
 .hero-photo img {
   width: 100%;
   border-radius: 24px;
@@ -153,6 +158,7 @@ main {
   box-shadow: 0 18px 36px rgba(163, 118, 60, 0.35);
   border: 3px solid rgba(246, 210, 123, 0.6);
   background: var(--cream);
+  will-change: clip-path, transform;
 }
 
 /* Sections */
@@ -233,6 +239,9 @@ main {
   background: var(--cream);
   border: 1px solid var(--border-soft);
   box-shadow: 0 10px 20px rgba(204, 163, 92, 0.16);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transform-origin: center;
+  cursor: pointer;
 }
 
 .gallery-item img {
@@ -262,6 +271,8 @@ main {
   border: 1px solid rgba(246, 210, 123, 0.5);
   padding: 14px 16px;
   box-shadow: 0 12px 24px rgba(193, 140, 96, 0.16);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
 }
 
 .letter-card h3 {
@@ -290,6 +301,7 @@ main {
   border: 1px solid var(--border-soft);
   padding: 14px 16px;
   box-shadow: 0 8px 18px rgba(193, 140, 96, 0.16);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .list-card h3 {
@@ -316,6 +328,30 @@ main {
   left: 0;
   top: 0;
   font-size: 0.8rem;
+}
+
+/* Hover and touch interactions for cards */
+.gallery-item:hover,
+.letter-card:hover,
+.list-card:hover {
+  transform: translateY(-6px) rotate3d(0.2, -0.2, 0, 2deg);
+  box-shadow: 0 16px 32px rgba(193, 140, 96, 0.26);
+}
+
+.gallery-item:active,
+.letter-card:active,
+.list-card:active {
+  transform: scale(0.97) translateY(1px);
+  box-shadow: 0 8px 16px rgba(193, 140, 96, 0.18);
+}
+
+@media (hover: none) {
+  .gallery-item:hover,
+  .letter-card:hover,
+  .list-card:hover {
+    transform: none;
+    box-shadow: 0 10px 20px rgba(204, 163, 92, 0.16);
+  }
 }
 
 /* Footer */
